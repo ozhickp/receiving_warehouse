@@ -1,0 +1,29 @@
+# ============================================================
+#  .gitignore — Receiving Warehouse
+# ============================================================
+
+# ── Kredensial & config sensitif — JANGAN PERNAH commit ────
+# Pakai config/database.example.php sebagai template untuk developer baru.
+config/database.php
+
+# ── Dependency (install ulang via `composer install`) ──────
+/vendor/
+
+# ── Log & file runtime ───────────────────────────────────────
+storage/logs/*.log
+!storage/logs/.gitkeep
+
+# ── File OS / editor ─────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── Composer lokal ───────────────────────────────────────────
+composer.phar
+
+# ── Upload sementara / cache lokal (kalau ada nanti) ────────
+*.tmp
+*.cache

@@ -1,0 +1,54 @@
+# ============================================================
+#  .htaccess — Receiving Warehouse
+#  Taruh SATU file ini di root project (sejajar dengan index.php)
+# ============================================================
+
+# ── Matikan directory listing ──────────────────────────────
+Options -Indexes
+
+# ── Blokir akses ke folder yang tidak boleh diakses langsung ─
+# (config/, includes/, vendor/, storage/ — hanya boleh dipakai lewat
+# require/include dari kode PHP, tidak pernah lewat URL langsung)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(config|includes|vendor|storage)(/|$) - [F,L]
+</IfModule>
+
+# Jaga-jaga kalau mod_rewrite tidak aktif di server: tetap tolak akses
+# ke folder-folder itu lewat cara lama (berlaku juga untuk subfoldernya).
+<IfModule !mod_rewrite.c>
+    <IfModule mod_authz_core.c>
+        <LocationMatch "^/(config|includes|vendor|storage)(/|$)">
+            Require all denied
+        </LocationMatch>
+    </IfModule>
+</IfModule>
+
+# ── Blokir akses langsung ke file sensitif di manapun letaknya ─
+<FilesMatch "\.(sql|log|md|lock|env)$|^(composer\.(json|lock)|README.*|CHANGES.*)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# ── Blokir akses ke file/folder tersembunyi (.git, .env, dll) ─
+<FilesMatch "^\.">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# ── Header keamanan dasar ───────────────────────────────────
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>

@@ -1,0 +1,15 @@
+{
+    "name": "we260004/receiving_warehouse",
+    "autoload": {
+        "psr-4": {
+            "We260004\\RawmatInventory\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "ozhickp",
+            "email": "ozhickb87@gmail.com"
+        }
+    ],
+    "require": {}
+}

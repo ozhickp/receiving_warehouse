@@ -1,0 +1,120 @@
+:root {
+    --sidebar-w:      240px;
+    --primary:        #9a031e;
+    --primary-light:  rgba(154,3,30,.15);
+    --sidebar-bg:     #1a1a2e;
+    --sidebar-text:   #c8c8d8;
+    --topbar-h:       56px;
+}
+
+/* ── Layout ─────────────────────────────────────────────── */
+body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #f4f5f7; }
+
+.sidebar {
+    position: fixed; top: 0; left: 0;
+    width: var(--sidebar-w); height: 100vh;
+    background: var(--sidebar-bg);
+    overflow-y: auto; z-index: 1000;
+    transition: transform .25s;
+}
+.sidebar.collapsed { transform: translateX(calc(-1 * var(--sidebar-w))); }
+
+.sidebar-brand {
+    display: flex; align-items: center; gap: 10px;
+    padding: 18px 20px;
+    color: #fff; font-size: 15px; font-weight: 600;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.sidebar-brand i { font-size: 22px; color: var(--primary); }
+
+.nav-section {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .07em; color: rgba(255,255,255,.3);
+    padding: 18px 20px 6px;
+}
+.nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 20px; color: var(--sidebar-text);
+    text-decoration: none; font-size: 14px;
+    transition: background .15s, color .15s;
+    border-left: 3px solid transparent;
+}
+.nav-item:hover  { background: rgba(255,255,255,.06); color: #fff; }
+.nav-item.active { background: var(--primary-light); color: #fff; border-left-color: var(--primary); }
+.nav-item i { font-size: 16px; width: 20px; text-align: center; }
+
+.main-wrapper {
+    margin-left: var(--sidebar-w);
+    min-height: 100vh;
+    transition: margin-left .25s;
+}
+.main-wrapper.expanded { margin-left: 0; }
+
+.top-navbar {
+    position: sticky; top: 0; z-index: 900;
+    height: var(--topbar-h);
+    background: #fff; border-bottom: 1px solid #e0e0e0;
+    display: flex; align-items: center;
+    padding: 0 24px; gap: 12px;
+}
+
+.page-content { padding: 24px; }
+
+/* ── Components ─────────────────────────────────────────── */
+.card { border: none; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+.card-header { background: #fff; border-bottom: 1px solid #f0f0f0; font-weight: 600; padding: 14px 20px; }
+
+.stat-card {
+    background: #fff; border-radius: 10px;
+    padding: 20px 22px; display: flex; align-items: center; gap: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.08);
+}
+.stat-icon {
+    width: 52px; height: 52px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; flex-shrink: 0;
+}
+.stat-value { font-size: 26px; font-weight: 700; line-height: 1; color: #1a1a2e; }
+.stat-label { font-size: 13px; color: #777; margin-top: 3px; }
+
+.role-badge { background: var(--primary); color: #fff; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+.user-name  { font-size: 14px; font-weight: 500; }
+
+/* Table */
+.table thead th { background: #f8f9fa; font-size: 13px; font-weight: 600; }
+.table tbody td { font-size: 14px; vertical-align: middle; }
+
+/* Badges status schedule */
+.badge-planned   { background: #dbeafe; color: #1e40af; font-weight: 600; }
+.badge-confirmed { background: #d1fae5; color: #065f46; font-weight: 600; }
+.badge-cancelled { background: #f3f4f6; color: #6b7280; font-weight: 600; }
+
+/* Flash */
+.flash-container { margin-bottom: 16px; }
+
+/* Page title area */
+.page-title { font-size: 20px; font-weight: 700; color: #1a1a2e; margin-bottom: 4px; }
+.page-subtitle { font-size: 13px; color: #888; }
+
+/* Weighing calc box */
+.calc-result {
+    background: #f8f9fa; border-radius: 10px;
+    padding: 20px; border: 1px solid #e9ecef;
+}
+.calc-result .calc-row {
+    display: flex; justify-content: space-between;
+    padding: 6px 0; font-size: 14px; border-bottom: 1px dashed #dee2e6;
+}
+.calc-result .calc-row:last-child { border: none; font-weight: 700; font-size: 15px; }
+.calc-result .calc-label { color: #555; }
+.calc-result .calc-value { font-weight: 600; color: #1a1a2e; }
+.deviation-ok   { color: #065f46; }
+.deviation-warn { color: #92400e; }
+.deviation-bad  { color: #991b1b; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .sidebar { transform: translateX(calc(-1 * var(--sidebar-w))); }
+    .sidebar.open { transform: translateX(0); }
+    .main-wrapper { margin-left: 0; }
+}
