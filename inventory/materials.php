@@ -81,14 +81,12 @@ $stmt->execute($params);
 $materials = $stmt->fetchAll();
 
 $flash = getFlash('mat');
+$navbarTitle    = 'Master Material';
+$navbarSubtitle = 'Daftar seluruh raw material';
 include __DIR__ . '/../includes/header.php';
 ?>
 
-<div class="d-flex justify-content-between align-items-start mb-4">
-    <div>
-        <div class="page-title">Master Material</div>
-        <div class="page-subtitle">Daftar seluruh raw material</div>
-    </div>
+<div class="d-flex justify-content-end mb-4">
     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAdd">
         <i class="bi bi-plus-lg me-1"></i> Tambah Material
     </button>

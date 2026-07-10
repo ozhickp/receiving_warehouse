@@ -101,14 +101,13 @@ $onlineIds = array_column($onlineUsers, 'id');
 
 $flash = getFlash('users');
 
+$navbarTitle    = 'Kelola User';
+$navbarSubtitle = 'Manajemen akun pengguna sistem';
+
 include __DIR__ . '/../includes/header.php';
 ?>
 
-<div class="d-flex justify-content-between align-items-start mb-4">
-    <div>
-        <div class="page-title">Kelola User</div>
-        <div class="page-subtitle">Manajemen akun pengguna sistem</div>
-    </div>
+<div class="d-flex justify-content-end mb-4">
     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAdd">
         <i class="bi bi-person-plus me-1"></i> Tambah User
     </button>

@@ -4,7 +4,7 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/helpers.php';
 
-requireRole(['admin','ppic','receiving']);
+requireRole(['admin', 'ppic', 'receiving']);
 startSession(); // pastikan session aktif
 $user       = currentUser();
 $activePage = 'schedule';
@@ -83,7 +83,10 @@ $filterStatus = $_GET['status'] ?? '';
 
 $where  = ["DATE(ss.schedule_date) = :d"];
 $params = [':d' => $filterDate];
-if ($filterStatus) { $where[] = "ss.status = :st"; $params[':st'] = $filterStatus; }
+if ($filterStatus) {
+    $where[] = "ss.status = :st";
+    $params[':st'] = $filterStatus;
+}
 
 $schedules = $pdo->prepare("
     SELECT ss.*, s.name AS supplier_name, m.name AS material_name, m.unit,
@@ -107,60 +110,59 @@ $totalPlanned->execute([$filterDate]);
 $totalPlanned = (int)$totalPlanned->fetchColumn();
 
 $flash = getFlash('schedule');
+$navbarTitle    = 'Schedule Supplier';
+$navbarSubtitle = 'Rencana kedatangan supplier';
 include __DIR__ . '/../includes/header.php';
 ?>
 
-<div class="d-flex justify-content-between align-items-start mb-4">
-    <div>
-        <div class="page-title">Schedule Supplier</div>
-        <div class="page-subtitle">Rencana kedatangan supplier</div>
-    </div>
-    <?php if (hasRole(['admin','ppic'])): ?>
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAdd">
-        <i class="bi bi-plus-lg me-1"></i> Tambah Schedule
-    </button>
-    <?php endif; ?>
-</div>
-
 <?php if ($flash): ?>
-<div class="alert alert-<?= $flash['type']==='success'?'success':'danger' ?> alert-dismissible fade show">
-    <?= e($flash['msg']) ?> <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-</div>
+    <div class="alert alert-<?= $flash['type'] === 'success' ? 'success' : 'danger' ?> alert-dismissible fade show">
+        <?= e($flash['msg']) ?> <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
 <?php endif; ?>
 <?php if (!empty($errors)): ?>
-<div class="alert alert-danger"><ul class="mb-0"><?php foreach ($errors as $er): ?><li><?= e($er) ?></li><?php endforeach; ?></ul></div>
+    <div class="alert alert-danger">
+        <ul class="mb-0"><?php foreach ($errors as $er): ?><li><?= e($er) ?></li><?php endforeach; ?></ul>
+    </div>
 <?php endif; ?>
 
 <?php if ($totalPlanned > 0): ?>
-<div class="alert alert-info d-flex align-items-center gap-2 mb-4">
-    <i class="bi bi-people-fill fs-5"></i>
-    <div>Hari ini terdapat <strong><?= $totalPlanned ?> kedatangan supplier</strong> yang belum dikonfirmasi. Pastikan personil receiving sudah siap.</div>
-</div>
+    <div class="alert alert-info d-flex align-items-center gap-2 mb-4">
+        <i class="bi bi-people-fill fs-5"></i>
+        <div>Hari ini terdapat <strong><?= $totalPlanned ?> kedatangan supplier</strong> yang belum dikonfirmasi. Pastikan personil receiving sudah siap.</div>
+    </div>
 <?php endif; ?>
 
-<!-- Filter -->
-<div class="card mb-4">
-    <div class="card-body">
-        <form method="get" class="row g-2 align-items-end">
-            <div class="col-auto">
-                <label class="form-label small fw-semibold mb-1">Tanggal</label>
-                <input type="date" name="date" class="form-control form-control-sm" value="<?= e($filterDate) ?>">
-            </div>
-            <div class="col-auto">
-                <label class="form-label small fw-semibold mb-1">Status</label>
-                <select name="status" class="form-select form-select-sm">
-                    <option value="">Semua</option>
-                    <option value="planned"   <?= $filterStatus==='planned'   ?'selected':'' ?>>Planned</option>
-                    <option value="confirmed" <?= $filterStatus==='confirmed' ?'selected':'' ?>>Confirmed</option>
-                    <option value="cancelled" <?= $filterStatus==='cancelled' ?'selected':'' ?>>Cancelled</option>
-                </select>
-            </div>
-            <div class="col-auto">
-                <button type="submit" class="btn btn-sm btn-primary">Filter</button>
-                <a href="<?= BASE_URL ?>/schedule/index.php" class="btn btn-sm btn-outline-secondary">Hari Ini</a>
-            </div>
-        </form>
+<!-- Filter sejajar dengan tombol Tambah Schedule di kanan -->
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+    <div class="card mb-0 flex-grow-1">
+        <div class="card-body">
+            <form method="get" class="row g-2 align-items-end">
+                <div class="col-auto">
+                    <label class="form-label small fw-semibold mb-1">Tanggal</label>
+                    <input type="date" name="date" class="form-control form-control-sm" value="<?= e($filterDate) ?>">
+                </div>
+                <div class="col-auto">
+                    <label class="form-label small fw-semibold mb-1">Status</label>
+                    <select name="status" class="form-select form-select-sm">
+                        <option value="">Semua</option>
+                        <option value="planned" <?= $filterStatus === 'planned'   ? 'selected' : '' ?>>Planned</option>
+                        <option value="confirmed" <?= $filterStatus === 'confirmed' ? 'selected' : '' ?>>Confirmed</option>
+                        <option value="cancelled" <?= $filterStatus === 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-sm btn-primary">Filter</button>
+                    <a href="<?= BASE_URL ?>/schedule/index.php" class="btn btn-sm btn-outline-secondary">Hari Ini</a>
+                </div>
+            </form>
+        </div>
     </div>
+    <?php if (hasRole(['admin', 'ppic'])): ?>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAdd">
+            <i class="bi bi-plus-lg me-1"></i> Tambah Schedule
+        </button>
+    <?php endif; ?>
 </div>
 
 <!-- Tabel -->
@@ -185,51 +187,53 @@ include __DIR__ . '/../includes/header.php';
                     </tr>
                 </thead>
                 <tbody>
-                <?php if (empty($schedules)): ?>
-                    <tr><td colspan="11" class="text-center text-muted py-4">Tidak ada schedule untuk tanggal ini.</td></tr>
-                <?php else: ?>
-                    <?php foreach ($schedules as $sc): ?>
-                    <tr>
-                        <td><?= e($sc['supplier_name']) ?></td>
-                        <td><?= e($sc['material_name']) ?></td>
-                        <td class="text-end"><?= number_format($sc['qty_expected'],2) ?> <small class="text-muted"><?= e($sc['unit']) ?></small></td>
-                        <td><code><?= e($sc['po_number']) ?></code></td>
-                        <td><?= $sc['do_number'] ? '<code>'.e($sc['do_number']).'</code>' : '<span class="text-muted">—</span>' ?></td>
-                        <td class="text-end"><?= $sc['qty_actual'] !== null ? number_format($sc['qty_actual'],2).' <small class="text-muted">'.e($sc['unit']).'</small>' : '<span class="text-muted">—</span>' ?></td>
-                        <td><small><?= e($sc['item_condition'] ?? '—') ?></small></td>
-                        <td><?= scheduleStatusBadge($sc['status']) ?></td>
-                        <td><small><?= e($sc['created_by_name']) ?></small></td>
-                        <td>
-                            <?php if ($sc['confirmed_by_name']): ?>
-                            <small><?= e($sc['confirmed_by_name']) ?><br><span class="text-muted"><?= date('d/m H:i', strtotime($sc['confirmed_at'])) ?></span></small>
-                            <?php else: ?>
-                            <span class="text-muted">—</span>
-                            <?php endif; ?>
-                        </td>
-                        <td>
-                            <?php if ($sc['status'] === 'planned'): ?>
-                            <?php if (hasRole(['admin','receiving'])): ?>
-                            <button class="btn btn-xs btn-success btn-confirm-trigger me-1"
-                                data-id="<?= $sc['id'] ?>"
-                                data-supplier="<?= e($sc['supplier_name']) ?>"
-                                data-material="<?= e($sc['material_name']) ?>"
-                                data-qty="<?= $sc['qty_expected'] ?>"
-                                data-unit="<?= e($sc['unit']) ?>">
-                                <i class="bi bi-check2-circle"></i> Konfirmasi
-                            </button>
-                            <?php endif; ?>
-                            <?php if (hasRole(['admin','ppic'])): ?>
-                            <form method="post" class="d-inline" onsubmit="return confirm('Batalkan schedule ini?')"><?= csrfField() ?>
-                                <input type="hidden" name="action" value="cancel">
-                                <input type="hidden" name="schedule_id" value="<?= $sc['id'] ?>">
-                                <button class="btn btn-xs btn-outline-secondary"><i class="bi bi-x"></i> Batal</button>
-                            </form>
-                            <?php endif; ?>
-                            <?php endif; ?>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                <?php endif; ?>
+                    <?php if (empty($schedules)): ?>
+                        <tr>
+                            <td colspan="11" class="text-center text-muted py-4">Tidak ada schedule untuk tanggal ini.</td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach ($schedules as $sc): ?>
+                            <tr>
+                                <td><?= e($sc['supplier_name']) ?></td>
+                                <td><?= e($sc['material_name']) ?></td>
+                                <td class="text-end"><?= number_format($sc['qty_expected'], 2) ?> <small class="text-muted"><?= e($sc['unit']) ?></small></td>
+                                <td><code><?= e($sc['po_number']) ?></code></td>
+                                <td><?= $sc['do_number'] ? '<code>' . e($sc['do_number']) . '</code>' : '<span class="text-muted">—</span>' ?></td>
+                                <td class="text-end"><?= $sc['qty_actual'] !== null ? number_format($sc['qty_actual'], 2) . ' <small class="text-muted">' . e($sc['unit']) . '</small>' : '<span class="text-muted">—</span>' ?></td>
+                                <td><small><?= e($sc['item_condition'] ?? '—') ?></small></td>
+                                <td><?= scheduleStatusBadge($sc['status']) ?></td>
+                                <td><small><?= e($sc['created_by_name']) ?></small></td>
+                                <td>
+                                    <?php if ($sc['confirmed_by_name']): ?>
+                                        <small><?= e($sc['confirmed_by_name']) ?><br><span class="text-muted"><?= date('d/m H:i', strtotime($sc['confirmed_at'])) ?></span></small>
+                                    <?php else: ?>
+                                        <span class="text-muted">—</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <?php if ($sc['status'] === 'planned'): ?>
+                                        <?php if (hasRole(['admin', 'receiving'])): ?>
+                                            <button class="btn btn-xs btn-success btn-confirm-trigger me-1"
+                                                data-id="<?= $sc['id'] ?>"
+                                                data-supplier="<?= e($sc['supplier_name']) ?>"
+                                                data-material="<?= e($sc['material_name']) ?>"
+                                                data-qty="<?= $sc['qty_expected'] ?>"
+                                                data-unit="<?= e($sc['unit']) ?>">
+                                                <i class="bi bi-check2-circle"></i> Konfirmasi
+                                            </button>
+                                        <?php endif; ?>
+                                        <?php if (hasRole(['admin', 'ppic'])): ?>
+                                            <form method="post" class="d-inline" onsubmit="return confirm('Batalkan schedule ini?')"><?= csrfField() ?>
+                                                <input type="hidden" name="action" value="cancel">
+                                                <input type="hidden" name="schedule_id" value="<?= $sc['id'] ?>">
+                                                <button class="btn btn-xs btn-outline-secondary"><i class="bi bi-x"></i> Batal</button>
+                                            </form>
+                                        <?php endif; ?>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>
@@ -257,7 +261,7 @@ include __DIR__ . '/../includes/header.php';
                         <label class="form-label fw-semibold small">Supplier <span class="text-danger">*</span></label>
                         <div class="ac-wrap">
                             <input type="text" id="acAddSupplier" class="form-control"
-                                   placeholder="Ketik nama supplier..." autocomplete="off">
+                                placeholder="Ketik nama supplier..." autocomplete="off">
                             <div class="ac-list" id="acAddSupplierList" style="display:none"></div>
                         </div>
                     </div>
@@ -265,7 +269,7 @@ include __DIR__ . '/../includes/header.php';
                         <label class="form-label fw-semibold small">Material <span class="text-danger">*</span></label>
                         <div class="ac-wrap">
                             <input type="text" id="acAddMaterial" class="form-control"
-                                   placeholder="Ketik kode atau nama material..." autocomplete="off">
+                                placeholder="Ketik kode atau nama material..." autocomplete="off">
                             <div class="ac-list" id="acAddMaterialList" style="display:none"></div>
                         </div>
                     </div>
@@ -335,115 +339,153 @@ include __DIR__ . '/../includes/header.php';
 <?= acStyles() ?>
 
 <script>
-const SUPPLIERS = <?= json_encode(array_map(fn($s) => ['id' => $s['id'], 'name' => $s['name']], $suppliers)) ?>;
-const MATERIALS = <?= json_encode(array_map(fn($m) => [
-    'id'   => $m['id'],
-    'code' => $m['code'],
-    'name' => $m['name'],
-    'unit' => $m['unit'],
-], $materials)) ?>;
+    const SUPPLIERS = <?= json_encode(array_map(fn($s) => ['id' => $s['id'], 'name' => $s['name']], $suppliers)) ?>;
+    const MATERIALS = <?= json_encode(array_map(fn($m) => [
+                            'id'   => $m['id'],
+                            'code' => $m['code'],
+                            'name' => $m['name'],
+                            'unit' => $m['unit'],
+                        ], $materials)) ?>;
 
-function hl(text, q) {
-    if (!q) return text;
-    const re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
-    return text.replace(re, '<mark style="padding:0;background:#fff3cd">$1</mark>');
-}
-
-function makeAC(inputEl, listEl, data, onSelect, labelFn, itemHtmlFn) {
-    let idx = -1;
-    function render(q) {
-        const ql = q.trim().toLowerCase();
-        if (!ql) { listEl.style.display = 'none'; return; }
-        const hits = data.filter(d => labelFn(d).toLowerCase().includes(ql)).slice(0, 20);
-        listEl.innerHTML = hits.length
-            ? hits.map((d, i) => itemHtmlFn(d, q.trim(), i)).join('')
-            : '<div class="ac-empty">Tidak ditemukan.</div>';
-        listEl.style.display = 'block'; idx = -1;
+    function hl(text, q) {
+        if (!q) return text;
+        const re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+        return text.replace(re, '<mark style="padding:0;background:#fff3cd">$1</mark>');
     }
-    inputEl.addEventListener('input', () => { onSelect(null); render(inputEl.value); });
-    inputEl.addEventListener('keydown', e => {
-        const items = listEl.querySelectorAll('.ac-item');
-        if (!items.length) return;
-        if (e.key === 'ArrowDown') { e.preventDefault(); idx = Math.min(idx + 1, items.length - 1); }
-        else if (e.key === 'ArrowUp') { e.preventDefault(); idx = Math.max(idx - 1, 0); }
-        else if (e.key === 'Enter') { e.preventDefault(); if (idx >= 0) items[idx].dispatchEvent(new Event('mousedown')); return; }
-        else if (e.key === 'Escape') { listEl.style.display = 'none'; return; }
-        items.forEach((el, i) => el.classList.toggle('active', i === idx));
-        if (idx >= 0) items[idx].scrollIntoView({ block: 'nearest' });
-    });
-    listEl.addEventListener('mousedown', e => {
-        const item = e.target.closest('.ac-item');
-        if (!item) return;
-        const d = data.find(x => String(x.id) === item.dataset.id);
-        if (d) { inputEl.value = labelFn(d); inputEl.classList.add('ac-confirmed'); listEl.style.display = 'none'; idx = -1; onSelect(d); }
-    });
-    document.addEventListener('click', e => {
-        if (!inputEl.closest('.ac-wrap').contains(e.target)) listEl.style.display = 'none';
-    });
-}
 
-// Supplier AC
-makeAC(
-    document.getElementById('acAddSupplier'),
-    document.getElementById('acAddSupplierList'),
-    SUPPLIERS,
-    d => { document.getElementById('hidAddSupplierId').value = d ? d.id : ''; },
-    d => d.name,
-    (d, q) => `<div class="ac-item" data-id="${d.id}"><span class="ac-name">${hl(d.name, q)}</span></div>`
-);
+    function makeAC(inputEl, listEl, data, onSelect, labelFn, itemHtmlFn) {
+        let idx = -1;
 
-// Material AC
-makeAC(
-    document.getElementById('acAddMaterial'),
-    document.getElementById('acAddMaterialList'),
-    MATERIALS,
-    d => {
-        document.getElementById('hidAddMaterialId').value = d ? d.id : '';
-        document.getElementById('addMatUnit').textContent = d ? d.unit : '—';
-    },
-    d => d.code + ' — ' + d.name,
-    (d, q) => `<div class="ac-item" data-id="${d.id}">
+        function render(q) {
+            const ql = q.trim().toLowerCase();
+            if (!ql) {
+                listEl.style.display = 'none';
+                return;
+            }
+            const hits = data.filter(d => labelFn(d).toLowerCase().includes(ql)).slice(0, 20);
+            listEl.innerHTML = hits.length ?
+                hits.map((d, i) => itemHtmlFn(d, q.trim(), i)).join('') :
+                '<div class="ac-empty">Tidak ditemukan.</div>';
+            listEl.style.display = 'block';
+            idx = -1;
+        }
+        inputEl.addEventListener('input', () => {
+            onSelect(null);
+            render(inputEl.value);
+        });
+        inputEl.addEventListener('keydown', e => {
+            const items = listEl.querySelectorAll('.ac-item');
+            if (!items.length) return;
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                idx = Math.min(idx + 1, items.length - 1);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                idx = Math.max(idx - 1, 0);
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (idx >= 0) items[idx].dispatchEvent(new Event('mousedown'));
+                return;
+            } else if (e.key === 'Escape') {
+                listEl.style.display = 'none';
+                return;
+            }
+            items.forEach((el, i) => el.classList.toggle('active', i === idx));
+            if (idx >= 0) items[idx].scrollIntoView({
+                block: 'nearest'
+            });
+        });
+        listEl.addEventListener('mousedown', e => {
+            const item = e.target.closest('.ac-item');
+            if (!item) return;
+            const d = data.find(x => String(x.id) === item.dataset.id);
+            if (d) {
+                inputEl.value = labelFn(d);
+                inputEl.classList.add('ac-confirmed');
+                listEl.style.display = 'none';
+                idx = -1;
+                onSelect(d);
+            }
+        });
+        document.addEventListener('click', e => {
+            if (!inputEl.closest('.ac-wrap').contains(e.target)) listEl.style.display = 'none';
+        });
+    }
+
+    // Supplier AC
+    makeAC(
+        document.getElementById('acAddSupplier'),
+        document.getElementById('acAddSupplierList'),
+        SUPPLIERS,
+        d => {
+            document.getElementById('hidAddSupplierId').value = d ? d.id : '';
+        },
+        d => d.name,
+        (d, q) => `<div class="ac-item" data-id="${d.id}"><span class="ac-name">${hl(d.name, q)}</span></div>`
+    );
+
+    // Material AC
+    makeAC(
+        document.getElementById('acAddMaterial'),
+        document.getElementById('acAddMaterialList'),
+        MATERIALS,
+        d => {
+            document.getElementById('hidAddMaterialId').value = d ? d.id : '';
+            document.getElementById('addMatUnit').textContent = d ? d.unit : '—';
+        },
+        d => d.code + ' — ' + d.name,
+        (d, q) => `<div class="ac-item" data-id="${d.id}">
         <span class="ac-code">${hl(d.code, q)}</span>
         <span class="ac-name">${hl(d.name, q)}</span>
     </div>`
-);
+    );
 
-// Reset AC saat modal dibuka
-document.getElementById('modalAdd').addEventListener('show.bs.modal', () => {
-    ['acAddSupplier','acAddMaterial'].forEach(id => {
-        const el = document.getElementById(id);
-        el.value = '';
-        el.classList.remove('ac-confirmed','is-invalid');
+    // Reset AC saat modal dibuka
+    document.getElementById('modalAdd').addEventListener('show.bs.modal', () => {
+        ['acAddSupplier', 'acAddMaterial'].forEach(id => {
+            const el = document.getElementById(id);
+            el.value = '';
+            el.classList.remove('ac-confirmed', 'is-invalid');
+        });
+        document.getElementById('hidAddSupplierId').value = '';
+        document.getElementById('hidAddMaterialId').value = '';
+        document.getElementById('addMatUnit').textContent = '—';
     });
-    document.getElementById('hidAddSupplierId').value = '';
-    document.getElementById('hidAddMaterialId').value = '';
-    document.getElementById('addMatUnit').textContent = '—';
-});
 
-// Validasi modal submit
-document.getElementById('formAdd').addEventListener('submit', function(e) {
-    let ok = true;
-    if (!document.getElementById('hidAddSupplierId').value) {
-        document.getElementById('acAddSupplier').classList.add('is-invalid'); ok = false;
-    }
-    if (!document.getElementById('hidAddMaterialId').value) {
-        document.getElementById('acAddMaterial').classList.add('is-invalid'); ok = false;
-    }
-    if (!ok) { e.preventDefault(); alert('Pastikan supplier dan material dipilih dari suggestion.'); }
-});
-
-// Konfirmasi trigger
-document.querySelectorAll('.btn-confirm-trigger').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.getElementById('confirmScheduleId').value = btn.dataset.id;
-        document.getElementById('confirmInfo').textContent = `${btn.dataset.supplier} — ${btn.dataset.material}`;
-        document.getElementById('confirmQty').value = btn.dataset.qty;
-        document.getElementById('confirmQtyHint').textContent = `Qty expected: ${parseFloat(btn.dataset.qty).toFixed(2)} ${btn.dataset.unit}`;
-        new bootstrap.Modal(document.getElementById('modalConfirm')).show();
+    // Validasi modal submit
+    document.getElementById('formAdd').addEventListener('submit', function(e) {
+        let ok = true;
+        if (!document.getElementById('hidAddSupplierId').value) {
+            document.getElementById('acAddSupplier').classList.add('is-invalid');
+            ok = false;
+        }
+        if (!document.getElementById('hidAddMaterialId').value) {
+            document.getElementById('acAddMaterial').classList.add('is-invalid');
+            ok = false;
+        }
+        if (!ok) {
+            e.preventDefault();
+            alert('Pastikan supplier dan material dipilih dari suggestion.');
+        }
     });
-});
+
+    // Konfirmasi trigger
+    document.querySelectorAll('.btn-confirm-trigger').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.getElementById('confirmScheduleId').value = btn.dataset.id;
+            document.getElementById('confirmInfo').textContent = `${btn.dataset.supplier} — ${btn.dataset.material}`;
+            document.getElementById('confirmQty').value = btn.dataset.qty;
+            document.getElementById('confirmQtyHint').textContent = `Qty expected: ${parseFloat(btn.dataset.qty).toFixed(2)} ${btn.dataset.unit}`;
+            new bootstrap.Modal(document.getElementById('modalConfirm')).show();
+        });
+    });
 </script>
 
-<style>.btn-xs { font-size: 12px; padding: 3px 8px; }</style>
+<style>
+    .btn-xs {
+        font-size: 12px;
+        padding: 3px 8px;
+    }
+</style>
 
 <?php include __DIR__ . '/../includes/footer.php'; ?>

@@ -18,8 +18,14 @@ $search   = trim($_GET['search'] ?? '');
 $where  = ["DATE(st.transaction_date) BETWEEN :df AND :dt"];
 $params = [':df' => $dateFrom, ':dt' => $dateTo];
 
-if ($type)   { $where[] = "st.type = :type";  $params[':type'] = $type; }
-if ($search) { $where[] = "(m.name LIKE :q OR m.code LIKE :q OR st.transaction_no LIKE :q OR st.po_number LIKE :q OR st.do_number LIKE :q)"; $params[':q'] = "%$search%"; }
+if ($type) {
+    $where[] = "st.type = :type";
+    $params[':type'] = $type;
+}
+if ($search) {
+    $where[] = "(m.name LIKE :q OR m.code LIKE :q OR st.transaction_no LIKE :q OR st.po_number LIKE :q OR st.do_number LIKE :q)";
+    $params[':q'] = "%$search%";
+}
 
 $sql = "
     SELECT st.transaction_no, st.type, st.qty, st.qty_before, st.qty_after,
@@ -38,11 +44,10 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $rows = $stmt->fetchAll();
 
+$navbarTitle    = 'History Transaksi';
+$navbarSubtitle = 'Riwayat semua transaksi Stock In & Out';
 include __DIR__ . '/../includes/header.php';
 ?>
-
-<div class="page-title mb-1">History Transaksi</div>
-<div class="page-subtitle mb-4">Riwayat semua transaksi Stock In & Out</div>
 
 <!-- Filter -->
 <div class="card mb-4">
@@ -60,9 +65,9 @@ include __DIR__ . '/../includes/header.php';
                 <label class="form-label small fw-semibold mb-1">Tipe</label>
                 <select name="type" class="form-select form-select-sm">
                     <option value="">Semua</option>
-                    <option value="IN"     <?= $type==='IN'     ? 'selected':'' ?>>Stock In</option>
-                    <option value="OUT"    <?= $type==='OUT'    ? 'selected':'' ?>>Stock Out</option>
-                    <option value="ADJUST" <?= $type==='ADJUST' ? 'selected':'' ?>>Adjust</option>
+                    <option value="IN" <?= $type === 'IN'     ? 'selected' : '' ?>>Stock In</option>
+                    <option value="OUT" <?= $type === 'OUT'    ? 'selected' : '' ?>>Stock Out</option>
+                    <option value="ADJUST" <?= $type === 'ADJUST' ? 'selected' : '' ?>>Adjust</option>
                 </select>
             </div>
             <div class="col-md-3">
@@ -101,33 +106,35 @@ include __DIR__ . '/../includes/header.php';
                     </tr>
                 </thead>
                 <tbody>
-                <?php if (empty($rows)): ?>
-                    <tr><td colspan="11" class="text-center text-muted py-4">Tidak ada data.</td></tr>
-                <?php else: ?>
-                    <?php foreach ($rows as $r): ?>
-                    <tr>
-                        <td><small><code><?= e($r['transaction_no']) ?></code></small></td>
-                        <td>
-                            <?php if ($r['type']==='IN'): ?>
-                            <span class="badge bg-success">IN</span>
-                            <?php elseif ($r['type']==='OUT'): ?>
-                            <span class="badge bg-warning text-dark">OUT</span>
-                            <?php else: ?>
-                            <span class="badge bg-secondary">ADJUST</span>
-                            <?php endif; ?>
-                        </td>
-                        <td><small><?= e($r['material_code']) ?> — <?= e($r['material_name']) ?></small></td>
-                        <td><small><?= e($r['supplier_name'] ?? '-') ?></small></td>
-                        <td class="text-end"><small><?= number_format($r['qty'],2) ?> <?= e($r['unit']) ?></small></td>
-                        <td class="text-end text-muted"><small><?= number_format($r['qty_before'],2) ?></small></td>
-                        <td class="text-end"><small><?= number_format($r['qty_after'],2) ?></small></td>
-                        <td><small><?= e($r['po_number'] ?? '-') ?></small></td>
-                        <td><small><?= e($r['do_number'] ?? '-') ?></small></td>
-                        <td><small><?= e($r['operator']) ?></small></td>
-                        <td><small><?= date('d/m/Y H:i', strtotime($r['transaction_date'])) ?></small></td>
-                    </tr>
-                    <?php endforeach; ?>
-                <?php endif; ?>
+                    <?php if (empty($rows)): ?>
+                        <tr>
+                            <td colspan="11" class="text-center text-muted py-4">Tidak ada data.</td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach ($rows as $r): ?>
+                            <tr>
+                                <td><small><code><?= e($r['transaction_no']) ?></code></small></td>
+                                <td>
+                                    <?php if ($r['type'] === 'IN'): ?>
+                                        <span class="badge bg-success">IN</span>
+                                    <?php elseif ($r['type'] === 'OUT'): ?>
+                                        <span class="badge bg-warning text-dark">OUT</span>
+                                    <?php else: ?>
+                                        <span class="badge bg-secondary">ADJUST</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td><small><?= e($r['material_code']) ?> — <?= e($r['material_name']) ?></small></td>
+                                <td><small><?= e($r['supplier_name'] ?? '-') ?></small></td>
+                                <td class="text-end"><small><?= number_format($r['qty'], 2) ?> <?= e($r['unit']) ?></small></td>
+                                <td class="text-end text-muted"><small><?= number_format($r['qty_before'], 2) ?></small></td>
+                                <td class="text-end"><small><?= number_format($r['qty_after'], 2) ?></small></td>
+                                <td><small><?= e($r['po_number'] ?? '-') ?></small></td>
+                                <td><small><?= e($r['do_number'] ?? '-') ?></small></td>
+                                <td><small><?= e($r['operator']) ?></small></td>
+                                <td><small><?= date('d/m/Y H:i', strtotime($r['transaction_date'])) ?></small></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>

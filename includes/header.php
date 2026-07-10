@@ -15,6 +15,22 @@ $activePage = $activePage ?? '';
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/style.css">
+    <style>
+        .navbar-title-block {
+            margin-left: .75rem;
+            line-height: 1.2;
+        }
+
+        .navbar-page-title {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .navbar-page-subtitle {
+            font-size: .78rem;
+            color: #6c757d;
+        }
+    </style>
 </head>
 
 <body>
@@ -123,6 +139,14 @@ $activePage = $activePage ?? '';
             <button class="btn btn-sm btn-outline-secondary" id="sidebarToggle">
                 <i class="bi bi-list"></i>
             </button>
+            <?php if (!empty($navbarTitle)): ?>
+                <div class="navbar-title-block">
+                    <div class="navbar-page-title"><?= e($navbarTitle) ?></div>
+                    <?php if (!empty($navbarSubtitle)): ?>
+                        <div class="navbar-page-subtitle"><?= e($navbarSubtitle) ?></div>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
             <div class="ms-auto d-flex align-items-center gap-3">
                 <span class="badge role-badge"><?= e($user['role']) ?></span>
                 <span class="user-name"><?= e($user['name']) ?></span>

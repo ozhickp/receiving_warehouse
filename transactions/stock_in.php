@@ -119,11 +119,10 @@ $todayIn = $pdo->query("
 ")->fetchAll();
 
 $flash = getFlash('stock_in');
+$navbarTitle    = 'Stock In';
+$navbarSubtitle = 'Penerimaan barang dari supplier';
 include __DIR__ . '/../includes/header.php';
 ?>
-
-<div class="page-title mb-1">Stock In</div>
-<div class="page-subtitle mb-4">Penerimaan barang dari supplier</div>
 
 <?php if ($flash): ?>
     <div class="alert alert-<?= $flash['type'] === 'success' ? 'success' : 'danger' ?> alert-dismissible fade show">

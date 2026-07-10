@@ -91,11 +91,10 @@ $recentAdjust = $pdo->query("
 ")->fetchAll();
 
 $flash = getFlash('stock_adjust');
+$navbarTitle    = 'Stock Adjustment (Opname)';
+$navbarSubtitle = 'Koreksi stok sistem agar sesuai hasil hitung fisik gudang';
 include __DIR__ . '/../includes/header.php';
 ?>
-
-<div class="page-title mb-1">Stock Adjustment (Opname)</div>
-<div class="page-subtitle mb-4">Koreksi stok sistem agar sesuai hasil hitung fisik gudang</div>
 
 <?php if ($flash): ?>
     <div class="alert alert-<?= $flash['type'] === 'success' ? 'success' : 'danger' ?> alert-dismissible fade show">

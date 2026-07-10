@@ -91,35 +91,40 @@ foreach ($locations as $l) {
     $i++;
 }
 
+$navbarTitle    = 'Peta Lokasi';
+$navbarSubtitle = 'Denah penempatan barang — klik kotak untuk lihat isi lokasi';
 include __DIR__ . '/../includes/header.php';
 ?>
 
-<div class="d-flex justify-content-between align-items-start mb-4">
-    <div>
-        <div class="page-title">Peta Lokasi</div>
-        <div class="page-subtitle">Denah penempatan barang — klik kotak untuk lihat isi lokasi</div>
-    </div>
-    <?php if (hasRole(['admin'])): ?>
-        <a href="<?= BASE_URL ?>/inventory/location_map_editor.php<?= $selectedWhId ? '?warehouse_id=' . $selectedWhId : '' ?>" class="btn btn-outline-primary">
-            <i class="bi bi-pencil me-1"></i> Atur Tata Letak
-        </a>
-    <?php endif; ?>
-</div>
-
 <?php if (empty($warehouses)): ?>
+    <div class="d-flex justify-content-end mb-3">
+        <?php if (hasRole(['admin'])): ?>
+            <a href="<?= BASE_URL ?>/inventory/location_map_editor.php" class="btn btn-outline-primary">
+                <i class="bi bi-pencil me-1"></i> Atur Tata Letak
+            </a>
+        <?php endif; ?>
+    </div>
     <div class="alert alert-info">Belum ada gudang aktif.</div>
 <?php else: ?>
 
-    <div class="mb-3">
-        <label class="form-label small fw-semibold mb-1">Pilih Gudang</label>
-        <select class="form-select form-select-sm" style="max-width:320px"
-            onchange="location.href='<?= BASE_URL ?>/inventory/location_map.php?warehouse_id='+this.value">
-            <?php foreach ($warehouses as $w): ?>
-                <option value="<?= $w['id'] ?>" <?= $w['id'] === $selectedWhId ? 'selected' : '' ?>>
-                    <?= e($w['name']) ?> (<?= e($w['code']) ?>)
-                </option>
-            <?php endforeach; ?>
-        </select>
+    <!-- Filter (Pilih Gudang) sejajar dengan tombol aksi di kanan -->
+    <div class="d-flex flex-wrap align-items-end justify-content-between gap-3 mb-3">
+        <div>
+            <label class="form-label small fw-semibold mb-1">Pilih Gudang</label>
+            <select class="form-select form-select-sm" style="max-width:320px"
+                onchange="location.href='<?= BASE_URL ?>/inventory/location_map.php?warehouse_id='+this.value">
+                <?php foreach ($warehouses as $w): ?>
+                    <option value="<?= $w['id'] ?>" <?= $w['id'] === $selectedWhId ? 'selected' : '' ?>>
+                        <?= e($w['name']) ?> (<?= e($w['code']) ?>)
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <?php if (hasRole(['admin'])): ?>
+            <a href="<?= BASE_URL ?>/inventory/location_map_editor.php<?= $selectedWhId ? '?warehouse_id=' . $selectedWhId : '' ?>" class="btn btn-outline-primary">
+                <i class="bi bi-pencil me-1"></i> Atur Tata Letak
+            </a>
+        <?php endif; ?>
     </div>
 
     <div class="d-flex flex-wrap gap-3 mb-3">

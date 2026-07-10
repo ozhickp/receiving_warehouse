@@ -91,14 +91,12 @@ $stmt->execute($params);
 $locations = $stmt->fetchAll();
 
 $flash = getFlash('loc');
+$navbarTitle    = 'Master Lokasi';
+$navbarSubtitle = 'Daftar lokasi penempatan barang (Zone + Rak) yang terdaftar, per gudang';
 include __DIR__ . '/../includes/header.php';
 ?>
 
-<div class="d-flex justify-content-between align-items-start mb-4">
-    <div>
-        <div class="page-title">Master Lokasi</div>
-        <div class="page-subtitle">Daftar lokasi penempatan barang (Zone + Rak) yang terdaftar, per gudang</div>
-    </div>
+<div class="d-flex justify-content-end mb-4">
     <?php if (empty($warehouses)): ?>
         <a href="<?= BASE_URL ?>/inventory/warehouses.php" class="btn btn-outline-primary">
             <i class="bi bi-building me-1"></i> Tambah Gudang Dulu

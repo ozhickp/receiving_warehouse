@@ -143,11 +143,10 @@ $records = $pdo->query("
 ")->fetchAll();
 
 $flash = getFlash('weighing');
+$navbarTitle    = 'Weighing System';
+$navbarSubtitle = 'Input penerimaan berbasis timbangan — otomatis menambah stok material';
 include __DIR__ . '/../includes/header.php';
 ?>
-
-<div class="page-title mb-1">Weighing System</div>
-<div class="page-subtitle mb-4">Input penerimaan berbasis timbangan — otomatis menambah stok material</div>
 
 <?php if ($flash): ?>
     <div class="alert alert-success alert-dismissible fade show">

@@ -127,11 +127,10 @@ $todayOut = $pdo->query("
 ")->fetchAll();
 
 $flash = getFlash('stock_out');
+$navbarTitle    = 'Stock Out';
+$navbarSubtitle = 'Pengeluaran material';
 include __DIR__ . '/../includes/header.php';
 ?>
-
-<div class="page-title mb-1">Stock Out</div>
-<div class="page-subtitle mb-4">Pengeluaran material</div>
 
 <?php if ($flash): ?>
     <div class="alert alert-success alert-dismissible fade show"><?= e($flash['msg']) ?> <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>

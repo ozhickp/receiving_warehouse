@@ -70,19 +70,16 @@ $recentActivity = $pdo->query("
     LIMIT 8
 ")->fetchAll();
 
+$hari  = ['Sunday' => 'Minggu', 'Monday' => 'Senin', 'Tuesday' => 'Selasa', 'Wednesday' => 'Rabu', 'Thursday' => 'Kamis', 'Friday' => 'Jumat', 'Saturday' => 'Sabtu'];
+$bulan = ['January' => 'Januari', 'February' => 'Februari', 'March' => 'Maret', 'April' => 'April', 'May' => 'Mei', 'June' => 'Juni', 'July' => 'Juli', 'August' => 'Agustus', 'September' => 'September', 'October' => 'Oktober', 'November' => 'November', 'December' => 'Desember'];
+
+// Judul & tanggal dashboard sekarang ditampilkan di navbar atas (sejajar posisi
+// user & tombol Keluar), bukan lagi di body halaman — lihat includes/header.php.
+$navbarTitle    = 'Dashboard';
+$navbarSubtitle = $hari[date('l')] . ', ' . date('d') . ' ' . $bulan[date('F')] . ' ' . date('Y');
+
 include __DIR__ . '/../includes/header.php';
 ?>
-
-<div class="d-flex justify-content-between align-items-start mb-4">
-    <div>
-        <div class="page-title">Dashboard</div>
-        <div class="page-subtitle"><?php
-                                    $hari = ['Sunday' => 'Minggu', 'Monday' => 'Senin', 'Tuesday' => 'Selasa', 'Wednesday' => 'Rabu', 'Thursday' => 'Kamis', 'Friday' => 'Jumat', 'Saturday' => 'Sabtu'];
-                                    $bulan = ['January' => 'Januari', 'February' => 'Februari', 'March' => 'Maret', 'April' => 'April', 'May' => 'Mei', 'June' => 'Juni', 'July' => 'Juli', 'August' => 'Agustus', 'September' => 'September', 'October' => 'Oktober', 'November' => 'November', 'December' => 'Desember'];
-                                    echo $hari[date('l')] . ', ' . date('d') . ' ' . $bulan[date('F')] . ' ' . date('Y');
-                                    ?></div>
-    </div>
-</div>
 
 <!-- ── Stat Cards ─────────────────────────────────────── -->
 <div class="row g-3 mb-4">

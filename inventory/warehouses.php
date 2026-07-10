@@ -66,14 +66,12 @@ $stmt = $pdo->query("
 $warehouses = $stmt->fetchAll();
 
 $flash = getFlash('wh');
+$navbarTitle    = 'Master Gudang';
+$navbarSubtitle = 'Daftar gudang/site — setiap lokasi (Zone+Rak) terdaftar di bawah salah satu gudang';
 include __DIR__ . '/../includes/header.php';
 ?>
 
-<div class="d-flex justify-content-between align-items-start mb-4">
-    <div>
-        <div class="page-title">Master Gudang</div>
-        <div class="page-subtitle">Daftar gudang/site — setiap lokasi (Zone+Rak) terdaftar di bawah salah satu gudang</div>
-    </div>
+<div class="d-flex justify-content-end mb-4">
     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAddWh">
         <i class="bi bi-plus-lg me-1"></i> Tambah Gudang
     </button>
